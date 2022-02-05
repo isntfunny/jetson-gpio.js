@@ -7,78 +7,43 @@ var Epoll        = require('epoll').Epoll;
 
 var PATH = '/sys/class/gpio';
 var PINS = {
-    v1: {
-        // 1: 3.3v
-        // 2: 5v
-        '3':  0,
-        // 4: 5v
-        '5':  1,
-        // 6: ground
-        '7':  4,
-        '8':  14,
-        // 9: ground
-        '10': 15,
-        '11': 17,
-        '12': 18,
-        '13': 21,
-        // 14: ground
-        '15': 22,
-        '16': 23,
-        // 17: 3.3v
-        '18': 24,
-        '19': 10,
-        // 20: ground
-        '21': 9,
-        '22': 25,
-        '23': 11,
-        '24': 8,
-        // 25: ground
-        '26': 7
-    },
-    v2: {
-        // 1: 3.3v
-        // 2: 5v
-        '3':  2,
-        // 4: 5v
-        '5':  3,
-        // 6: ground
-        '7':  4,
-        '8':  14,
-        // 9: ground
-        '10': 15,
-        '11': 17,
-        '12': 18,
-        '13': 27,
-        // 14: ground
-        '15': 22,
-        '16': 23,
-        // 17: 3.3v
-        '18': 24,
-        '19': 10,
-        // 20: ground
-        '21': 9,
-        '22': 25,
-        '23': 11,
-        '24': 8,
-        // 25: ground
-        '26': 7,
-
-        // Model B+ pins
-        // 27: ID_SD
-        // 28: ID_SC
-        '29': 5,
-        // 30: ground
-        '31': 6,
-        '32': 12,
-        '33': 13,
-        // 34: ground
-        '35': 19,
-        '36': 16,
-        '37': 26,
-        '38': 20,
-        // 39: ground
-        '40': 21
-    }
+    // 1: 3.3v
+    // 2: 5v
+    //'3':  0,
+    // 4: 5v
+    //'5':  1,
+    // 6: ground
+    '7':  216,
+    //'8':  14,
+    // 9: ground
+    //'10': 15,
+    '11': 50,
+    '12': 79,
+    '13': 14,
+    // 14: ground
+    '15': 194,
+    '16': 232,
+    // 17: 3.3v
+    '18': 15,
+    '19': 16,
+    // 20: ground
+    '21': 17,
+    '22': 13,
+    '23': 18,
+    '24': 19,
+    // 25: ground
+    '26': 20,
+    '29': 149,
+    '31': 200,
+    '32': 168,
+    '33': 38,
+    // 34: ground
+    '35': 76,
+    '36': 51,
+    '37': 12,
+    '38': 77,
+    // 39: ground
+    '40': 78
 };
 
 var RETRY_OPTS = {
@@ -356,42 +321,9 @@ function Gpio() {
         }
 
         return new Promise(function(resolve, reject) {
-            fs.readFile('/proc/cpuinfo', 'utf8', function(err, data) {
-                if (err) {
-                    return reject(err);
-                }
-
-                // Match the last 4 digits of the number following "Revision:"
-                var match = data.match(/Revision\s*:\s*[0-9a-f]*([0-9a-f]{4})/);
-
-                if (!match) {
-                    var errorMessage = 'Unable to match Revision in /proc/cpuinfo: ' + data;
-                    return reject(new Error(errorMessage));
-                }
-
-                var revisionNumber = parseInt(match[1], 16);
-                var pinVersion = (revisionNumber < 4) ? 'v1' : 'v2';
-
-                debug(
-                    'seen hardware revision %d; using pin mode %s',
-                    revisionNumber,
-                    pinVersion
-                );
-
-                // Create a list of valid BCM pins for this Raspberry Pi version.
-                // This will be used to validate channel numbers in getPinBcm
-                currentValidBcmPins = []
-                Object.keys(PINS[pinVersion]).forEach(
-                  function(pin) {
-                    // Lookup the BCM pin for the RPI pin and add it to the list
-                    currentValidBcmPins.push(PINS[pinVersion][pin]);
-                  }
-                );
-
-                currentPins = PINS[pinVersion];
-
-                return resolve();
-            });
+            currentPins = PINS;
+            
+            resolve();
         });
     };
 
