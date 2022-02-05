@@ -323,7 +323,7 @@ function Gpio() {
         return new Promise(function(resolve, reject) {
             currentPins = PINS;
             
-            resolve();
+            return resolve();
         });
     };
 
